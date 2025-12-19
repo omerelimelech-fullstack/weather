@@ -8,6 +8,7 @@ import CurrentWeather from './components/weather/CurrentWeather';
 import WeatherDetails from './components/weather/WeatherDetails';
 import DailyForecast from './components/weather/DailyForecast';
 import HourlyForecast from './components/weather/HourlyForecast';
+import WeatherSkeleton from './components/weather/WeatherSkeleton';
 import { isRainyWeather, isCloudyWeather } from './components/weather/WeatherIcon';
 
 const fetchWeather = async (lat: number, lon: number) => {
@@ -34,9 +35,20 @@ const fetchWeather = async (lat: number, lon: number) => {
     timezone: 'auto'
   });
 
-  const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
-  if (!res.ok) throw new Error('Failed to fetch weather');
-  return res.json();
+  const weatherPromise = fetch(`https://api.open-meteo.com/v1/forecast?${params}`)
+    .then(async res => {
+      if (!res.ok) throw new Error('Failed to fetch weather');
+      return res.json();
+    });
+
+  const aqiPromise = fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=european_aqi`)
+    .then(async res => {
+      if (!res.ok) return null;
+      return res.json();
+    });
+
+  const [weather, aqi] = await Promise.all([weatherPromise, aqiPromise]);
+  return { weather, aqi };
 };
 
 function getBackgroundStyle(temp: number, weatherCode: number) {
@@ -83,7 +95,7 @@ export default function SkyVibe() {
     }
   }, []);
 
-  const { data: weather, isLoading, error, refetch, isFetching } = useQuery({
+  const { data: combinedData, isPending: isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ['weather', location?.lat, location?.lon],
     queryFn: () => {
       if (!location) throw new Error("Location is missing");
@@ -93,6 +105,9 @@ export default function SkyVibe() {
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  const weather = combinedData?.weather;
+  const aqi = combinedData?.aqi;
 
   const handleLocationSelect = (loc: LocationData) => {
     setLocation(loc);
@@ -238,16 +253,14 @@ export default function SkyVibe() {
 
           {/* Main Content */}
           <AnimatePresence mode="wait">
-            {isLoading && !weather ? (
+            {isLoading ? (
               <motion.div
-                key="loading"
+                key="skeleton"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col items-center justify-center py-32"
               >
-                <Loader2 className="w-12 h-12 text-white/60 animate-spin mb-4" />
-                <p className="text-white/60">Fetching weather data...</p>
+                <WeatherSkeleton />
               </motion.div>
             ) : error ? (
               <motion.div
@@ -284,7 +297,10 @@ export default function SkyVibe() {
 
                 <CurrentWeather data={weather} location={location} />
                 <HourlyForecast data={weather} />
-                <WeatherDetails data={weather} />
+                <WeatherDetails
+                  data={weather}
+                  aqi={aqi?.current?.european_aqi}
+                />
                 <DailyForecast data={weather} />
 
                 {/* Last updated */}

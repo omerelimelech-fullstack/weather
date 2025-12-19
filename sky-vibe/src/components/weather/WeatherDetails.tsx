@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Droplets, Wind, Thermometer, Sun, type LucideIcon } from 'lucide-react';
+import AirQuality from './AirQuality';
 
 interface DetailCardProps {
     icon: LucideIcon;
@@ -15,11 +16,11 @@ function DetailCard({ icon: Icon, label, value, unit, delay }: DetailCardProps) 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay, duration: 0.4 }}
-            className="relative group"
+            className="relative group h-full"
         >
             <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-3xl border border-white/30
                       group-hover:bg-white/25 transition-all duration-300 shadow-lg shadow-black/5" />
-            <div className="relative p-5">
+            <div className="relative p-5 h-full flex flex-col justify-between">
                 <div className="flex items-center gap-2 mb-3">
                     <Icon className="w-4 h-4 text-white/60" />
                     <span className="text-xs font-medium text-white/60 uppercase tracking-wider">
@@ -37,9 +38,10 @@ function DetailCard({ icon: Icon, label, value, unit, delay }: DetailCardProps) 
 
 interface WeatherDetailsProps {
     data: any;
+    aqi?: number;
 }
 
-export default function WeatherDetails({ data }: WeatherDetailsProps) {
+export default function WeatherDetails({ data, aqi }: WeatherDetailsProps) {
     const humidity = data.current.relative_humidity_2m;
     const windSpeed = Math.round(data.current.wind_speed_10m);
     const feelsLike = Math.round(data.current.apparent_temperature);
@@ -63,9 +65,17 @@ export default function WeatherDetails({ data }: WeatherDetailsProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="px-4"
+            className="px-4 mb-4"
         >
             <div className="grid grid-cols-2 gap-3">
+                {/* AQI Card - Spans full width */}
+                {aqi !== undefined && (
+                    <div className="col-span-2">
+                        <AirQuality aqi={aqi} />
+                    </div>
+                )}
+
+                {/* Other Details */}
                 {details.map((detail, idx) => (
                     <DetailCard
                         key={detail.label}

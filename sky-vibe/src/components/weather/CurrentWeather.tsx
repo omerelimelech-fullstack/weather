@@ -19,13 +19,14 @@ export default function CurrentWeather({ data, location }: CurrentWeatherProps) 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="text-center py-8"
+            className="text-center py-6"
         >
+            {/* Location */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 }}
-                className="flex items-center justify-center gap-2 mb-4"
+                className="flex items-center justify-center gap-2 mb-2"
             >
                 <MapPin className="w-4 h-4 text-white/70" />
                 <span className="text-white/90 font-medium text-lg">
@@ -33,14 +34,16 @@ export default function CurrentWeather({ data, location }: CurrentWeatherProps) 
                 </span>
             </motion.div>
 
+            {/* Main Info: Icon + Temp */}
             <motion.div
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                className="flex justify-center mb-6"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="flex flex-row items-center justify-center gap-8 py-2"
             >
+                {/* Weather Icon */}
                 <div className="relative">
-                    <div className="absolute inset-0 blur-3xl bg-white/30 rounded-full scale-150 animate-pulse" />
+                    <div className="absolute inset-0 blur-3xl bg-white/30 rounded-full scale-125 animate-pulse" />
                     <WeatherIcon
                         code={data.current.weather_code}
                         size="2xl"
@@ -48,34 +51,32 @@ export default function CurrentWeather({ data, location }: CurrentWeatherProps) 
                         animate={true}
                     />
                 </div>
+
+                {/* Temperature */}
+                <div className="flex items-start">
+                    <span className="text-7xl md:text-8xl font-thin text-white leading-none tracking-tighter">
+                        {temp}
+                    </span>
+                    <span className="text-4xl md:text-5xl font-thin text-white/70 mt-2">°</span>
+                </div>
             </motion.div>
 
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="mb-2"
-            >
-                <span className="text-[140px] md:text-[180px] font-thin text-white leading-none tracking-tighter">
-                    {temp}
-                </span>
-                <span className="text-5xl md:text-6xl font-thin text-white/70 align-top">°</span>
-            </motion.div>
-
+            {/* Description */}
             <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-white/90 text-2xl font-thin tracking-wide"
+                transition={{ delay: 0.3 }}
+                className="text-white/90 text-2xl font-thin tracking-wide mb-2"
             >
                 {label}
             </motion.p>
 
+            {/* High / Low */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-4 flex items-center justify-center gap-4 text-white/70"
+                transition={{ delay: 0.4 }}
+                className="flex items-center justify-center gap-4 text-white/70"
             >
                 <span className="text-sm">
                     H: {Math.round(data.daily.temperature_2m_max[0])}°
