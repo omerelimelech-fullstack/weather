@@ -1,0 +1,2 @@
+src/App.tsx(105,17): error TS6133: 'res' is declared but its value is never read.
+src/components/weather/CurrentWeather.tsx(14,19): error TS6133: 'Icon' is declared but its value is never read.

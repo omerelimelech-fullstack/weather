@@ -1,0 +1,7 @@
+src/App.tsx(5,41): error TS2307: Cannot find module './components/weather/SearchBar' or its corresponding type declarations.
+src/App.tsx(6,28): error TS2307: Cannot find module './components/weather/CurrentWeather' or its corresponding type declarations.
+src/App.tsx(7,28): error TS2307: Cannot find module './components/weather/WeatherDetails' or its corresponding type declarations.
+src/App.tsx(8,27): error TS2307: Cannot find module './components/weather/DailyForecast' or its corresponding type declarations.
+src/App.tsx(9,49): error TS2307: Cannot find module './components/weather/WeatherIcon' or its corresponding type declarations.
+src/App.tsx(105,17): error TS6133: 'res' is declared but its value is never read.
+src/components/CurrentWeather.tsx(14,19): error TS6133: 'Icon' is declared but its value is never read.

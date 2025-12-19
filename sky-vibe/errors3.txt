@@ -1,0 +1,1 @@
+src/components/weather/CurrentWeather.tsx(14,19): error TS6133: 'Icon' is declared but its value is never read.
